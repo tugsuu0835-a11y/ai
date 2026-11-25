@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Academic Assistant</title>
+<style>
+:root{--bg:#f5f7fb;--panel:#fff;--ink:#17243a;--muted:#718096;--line:#e6ebf2;--blue:#356df3;--blue2:#eaf0ff;--teal:#19a58b;--shadow:0 12px 35px rgba(25,45,80,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}
+.app{min-height:100vh;display:grid;grid-template-columns:250px 1fr}
+.sidebar{background:#101d33;color:#dce6f8;padding:22px 16px;display:flex;flex-direction:column;gap:22px}
+.brand{display:flex;align-items:center;gap:11px;padding:4px 8px}.logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#5c8cff,#2bd1b1);display:grid;place-items:center;color:#fff;font-weight:800;font-size:18px}.brand strong{display:block;color:#fff;font-size:15px}.brand small{color:#91a3c1;font-size:11px}
+.navlabel{font-size:10px;letter-spacing:1.4px;color:#7e91b0;padding:0 10px;margin-bottom:4px}.nav{display:grid;gap:5px}.nav button{display:flex;align-items:center;gap:12px;text-align:left;padding:11px 12px;border-radius:10px;color:#b9c7dd;background:transparent}.nav button.active,.nav button:hover{background:#203454;color:#fff}.nav .ico{width:20px;text-align:center;font-size:17px}
+.sidebottom{margin-top:auto;border-top:1px solid #293b57;padding:16px 8px 0;color:#91a3c1;font-size:12px}.profile{display:flex;align-items:center;gap:10px;margin-top:12px;color:#e7eefb}.avatar{width:32px;height:32px;border-radius:50%;background:#29456d;display:grid;place-items:center}
+main{min-width:0;padding:28px clamp(18px,4vw,54px) 45px;max-width:1500px;width:100%;margin:auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:15px}.crumb{color:var(--muted);font-size:13px}.topright{display:flex;gap:10px;align-items:center}.pill{border:1px solid var(--line);border-radius:30px;padding:7px 12px;background:#fff;font-size:12px;color:#53627a}.pill.demo{background:#fff7e8;color:#94621a;border-color:#f4dfb8}
+.page{display:none}.page.active{display:block}.heading{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:22px}.eyebrow{font-size:11px;letter-spacing:1.4px;color:var(--blue);font-weight:800}.heading h1{font-size:clamp(25px,3vw,34px);line-height:1.15;margin:6px 0 8px;letter-spacing:-.8px}.heading p{color:var(--muted);margin:0;max-width:650px}.primary{background:var(--blue);color:#fff;border-radius:10px;padding:11px 16px;font-weight:650;box-shadow:0 6px 14px #356df32b}.secondary{background:#fff;border:1px solid var(--line);color:#40516b;border-radius:10px;padding:10px 14px;font-weight:600}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.stat{padding:18px}.stat .label{font-size:12px;color:var(--muted)}.stat strong{display:block;font-size:26px;margin:6px 0 2px;letter-spacing:-.5px}.stat small{color:#159675;font-size:11px}.dashboard-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:16px}.welcome{padding:24px;background:linear-gradient(115deg,#142b4e,#2858a6);color:#fff;position:relative;overflow:hidden}.welcome:after{content:"✦";position:absolute;font-size:170px;right:30px;top:-38px;color:#ffffff12}.welcome h2{font-size:23px;margin:0 0 8px}.welcome p{color:#d2e0f8;max-width:540px;margin:0 0 18px}.welcome .primary{background:#fff;color:#2456b8;box-shadow:none}.cardhead{padding:18px 20px 0;display:flex;justify-content:space-between;align-items:center}.cardhead h3{font-size:15px;margin:0}.cardbody{padding:16px 20px 20px}.quickgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.quick{padding:15px;border:1px solid var(--line);border-radius:12px;text-align:left;background:#fff}.quick:hover{border-color:#9db7ff;background:#f8faff}.quick b{display:block;margin:7px 0 2px}.quick small{color:var(--muted)}.quick .qico{font-size:21px}
+.chatlayout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:16px;min-height:650px}.chatbox{display:flex;flex-direction:column;overflow:hidden;min-height:650px}.chathead{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.chathead b{font-size:14px}.chatmessages{padding:22px;display:flex;flex-direction:column;gap:16px;flex:1;overflow:auto;max-height:570px}.msg{display:flex;gap:10px;max-width:88%}.msg.user{align-self:flex-end;flex-direction:row-reverse}.bubble{padding:12px 15px;border-radius:14px;background:#f1f4fa;color:#293b55;white-space:pre-wrap}.user .bubble{background:#e8efff;color:#1d438e}.msg .avatar{flex-shrink:0}.composer{padding:15px;border-top:1px solid var(--line)}.composerwrap{display:flex;gap:9px;align-items:flex-end;border:1px solid #dfe6f0;border-radius:13px;padding:9px;background:#fff}.composer textarea{border:0;outline:0;resize:vertical;min-height:42px;max-height:130px;flex:1;padding:8px;color:var(--ink)}.send{width:42px;height:42px;border-radius:10px;background:var(--blue);color:white;font-size:18px}.hint{font-size:11px;color:#94a0b1;margin:7px 4px 0}.context{padding:18px}.context h3{margin:0 0 12px;font-size:14px}.uploadzone{border:1.5px dashed #bdc9db;border-radius:12px;padding:18px;text-align:center;background:#fafcff}.uploadzone .big{font-size:28px}.uploadzone p{font-size:12px;color:var(--muted);margin:5px 0 12px}.fileinfo{margin-top:12px;padding:10px;background:#f1f7ff;border-radius:10px;font-size:12px;display:none}.context ul{padding-left:18px;color:#65758d;font-size:12px}.context li{margin:7px 0}.featurelist{display:grid;gap:10px;margin-top:18px}.featureitem{display:flex;gap:10px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:11px;font-size:12px}.featureitem span{font-size:17px}
+.toolgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.toolcard{padding:20px;cursor:pointer;text-align:left}.toolcard:hover{border-color:#9db7ff;transform:translateY(-1px)}.toolcard .big{font-size:25px}.toolcard h3{font-size:15px;margin:10px 0 5px}.toolcard p{font-size:12px;color:var(--muted);margin:0}.toolwork{margin-top:18px;padding:22px}.toolwork textarea{width:100%;min-height:150px;border:1px solid var(--line);border-radius:11px;padding:13px;resize:vertical;outline-color:var(--blue)}.output{margin-top:14px;padding:16px;border-radius:12px;background:#f5f8ff;white-space:pre-wrap;min-height:80px}.settings{max-width:760px;padding:22px}.field{display:grid;gap:6px;margin:14px 0}.field label{font-size:12px;font-weight:700;color:#53627a}.field input,.field select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;outline-color:var(--blue);background:#fff}.note{padding:13px;border-radius:10px;background:#fff8e9;color:#805c1b;font-size:12px;margin:15px 0}.empty{color:var(--muted);font-size:13px;text-align:center;padding:25px}.toast{position:fixed;right:20px;bottom:20px;background:#172b49;color:#fff;padding:12px 16px;border-radius:10px;box-shadow:var(--shadow);display:none;z-index:5}
+@media(max-width:950px){.app{grid-template-columns:76px 1fr}.sidebar{padding:18px 10px}.brand{justify-content:center;padding:0}.brandtext,.navlabel,.nav button .navtext,.sidebottom .profiletext,.sidebottom .foottext{display:none}.nav button{justify-content:center;padding:12px}.sidebottom{text-align:center}.profile{justify-content:center}.grid4{grid-template-columns:repeat(2,1fr)}.chatlayout{grid-template-columns:1fr}.context{order:-1}.toolgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){main{padding:18px 13px 30px}.topbar{margin-bottom:20px}.heading{display:block}.heading .primary{margin-top:14px}.grid4{gap:8px}.stat{padding:13px}.stat strong{font-size:22px}.dashboard-grid{grid-template-columns:1fr}.toolgrid{grid-template-columns:1fr}.chatmessages{padding:14px}.chatbox,.chatlayout{min-height:580px}.msg{max-width:96%}.topright .pill:first-child{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">A</div><div class="brandtext"><strong>Academic AI</strong><small>LEARN SMARTER</small></div></div>
+  <div><div class="navlabel">WORKSPACE</div><nav class="nav">
+    <button class="active" data-page="home"><span class="ico">⌂</span><span class="navtext">Нүүр хуудас</span></button>
+    <button data-page="chat"><span class="ico">✧</span><span class="navtext">AI багш</span></button>
+    <button data-page="library"><span class="ico">▤</span><span class="navtext">Материалын сан</span></button>
+    <button data-page="tools"><span class="ico">⚡</span><span class="navtext">Суралцах хэрэгсэл</span></button>
+  </nav></div>
+  <div><div class="navlabel">ACCOUNT</div><nav class="nav">
+    <button data-page="settings"><span class="ico">⚙</span><span class="navtext">Тохиргоо</span></button>
+  </nav></div>
+  <div class="sidebottom"><div class="foottext">Таны суралцах орон зай</div><div class="profile"><div class="avatar">О</div><div class="profiletext"><b>Оюутан</b><br><small>Үнэгүй хэрэглэгч</small></div></div></div>
+</aside>
+<main>
+  <div class="topbar"><div class="crumb">Workspace / <b id="crumb">Нүүр хуудас</b></div><div class="topright"><span class="pill demo" id="modePill">● Шалгаж байна…</span><span class="pill">MN Монгол</span></div></div>
+
+  <section class="page active" id="home">
+    <div class="heading"><div><div class="eyebrow">ТАНЫ ХУВИЙН СУРГАЛТЫН ТУСЛАХ</div><h1>Сайн байна уу! 👋</h1><p>Өнөөдөр юу сурах вэ? Материалаа оруулж, AI багшаасаа асуултаа асуугаарай.</p></div><button class="primary" onclick="showPage('chat')">✧ AI багштай ярилцах</button></div>
+    <div class="grid4">
+      <div class="card stat"><div class="label">Оруулсан материал</div><strong id="statFiles">0</strong><small>Материалын сан</small></div>
+      <div class="card stat"><div class="label">Үүсгэсэн хураангуй</div><strong id="statSummaries">0</strong><small>Таны тэмдэглэл</small></div>
+      <div class="card stat"><div class="label">Үүсгэсэн сорил</div><strong id="statQuizzes">0</strong><small>Давтлагын материал</small></div>
+      <div class="card stat"><div class="label">Суралцах идэвх</div><strong>Эхэлцгээе</strong><small>Өнөөдрийн зорилгоо тавиарай</small></div>
+    </div>
+    <div class="dashboard-grid">
+      <div class="card welcome"><div class="eyebrow" style="color:#a9c7ff">AI ACADEMIC ASSISTANT</div><h2>Илүү ухаалгаар суралц.</h2><p>PDF материалаа оруулж асуулт асуух, гол санааг хураангуйлах, шалгалтын сорил үүсгэх боломж нэг дор.</p><button class="primary" onclick="showPage('chat')">Яриагаа эхлүүлэх →</button></div>
+      <div class="card"><div class="cardhead"><h3>Түргэн үйлдэл</h3></div><div class="cardbody quickgrid">
+        <button class="quick" onclick="showPage('chat')"><span class="qico">📄</span><b>PDF асуух</b><small>Материалаасаа хариулт авах</small></button>
+        <button class="quick" onclick="showPage('tools');selectTool('summary')"><span class="qico">📝</span><b>Хураангуй</b><small>Гол санааг ялгах</small></button>
+        <button class="quick" onclick="showPage('tools');selectTool('quiz')"><span class="qico">🎯</span><b>Сорил үүсгэх</b><small>Мэдлэгээ шалгах</small></button>
+        <button class="quick" onclick="showPage('tools');selectTool('cards')"><span class="qico">🗂️</span><b>Flashcards</b><small>Нэр томьёо давтах</small></button>
+      </div></div>
+    </div>
+    <div class="card" style="margin-top:16px"><div class="cardhead"><h3>Хэрхэн ашиглах вэ?</h3></div><div class="cardbody" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+      <div><b>01 · Материалаа оруул</b><p style="font-size:12px;color:var(--muted)">PDF хичээлийн материалаа сонгоно.</p></div>
+      <div><b>02 · Асуултаа асуу</b><p style="font-size:12px;color:var(--muted)">Ойлгохгүй хэсгээ энгийнээр тайлбарлуулна.</p></div>
+      <div><b>03 · Мэдлэгээ бататга</b><p style="font-size:12px;color:var(--muted)">Хураангуй, сорил, flashcard үүсгэнэ.</p></div>
+    </div></div>
+  </section>
+
+  <section class="page" id="chat">
+    <div class="heading"><div><div class="eyebrow">AI TUTOR</div><h1>AI багш</h1><p>Хичээлийнхээ талаар асуугаарай. Материал оруулбал түүнд тулгуурлан хариулна.</p></div></div>
+    <div class="chatlayout">
+      <div class="card chatbox">
+        <div class="chathead"><b>✧ Академик туслах</b><span class="pill" id="chatStatus">Бэлэн</span></div>
+        <div class="chatmessages" id="messages">
+          <div class="msg"><div class="avatar">✧</div><div class="bubble">Сайн байна уу! Би таны AI Academic Assistant. Хичээлийн сэдвээ асуух эсвэл PDF материалаа оруулаарай.\n\nЖишээ: “Рекурс гэж юу вэ? Энгийн жишээгээр тайлбарла.”</div></div>
+        </div>
+        <div class="composer"><div class="composerwrap"><textarea id="question" placeholder="Асуултаа энд бичнэ үү..." rows="1"></textarea><button class="send" id="sendBtn" title="Илгээх">➤</button></div><div class="hint">Enter — илгээх · Shift + Enter — шинэ мөр</div></div>
+      </div>
+      <aside class="card context">
+        <h3>📚 Материал оруулах</h3>
+        <div class="uploadzone"><div class="big">📄</div><b style="font-size:13px">PDF материалаа сонгох</b><p>PDF файл · 15MB хүртэл</p><button class="secondary" onclick="document.getElementById('pdfInput').click()">Файл сонгох</button><input type="file" id="pdfInput" accept="application/pdf,.pdf" hidden></div>
+        <div class="fileinfo" id="fileInfo"></div>
+        <div class="featurelist"><h3 style="margin:4px 0">Туслах боломжууд</h3><div class="featureitem"><span>🔎</span> Материалаас мэдээлэл хайх</div><div class="featureitem"><span>💡</span> Алхамчилж тайлбарлах</div><div class="featureitem"><span>📌</span> Эх сурвалжийн хуудсыг заах</div></div>
+        <ul><li>PDF-ийн текстэн агуулгыг уншина.</li><li>Скан зураг хэлбэрийн PDF-ийн OCR энэ хувилбарт ороогүй.</li><li>Файл таны энэ хөтчийн сессэд боловсруулагдана.</li></ul>
+      </aside>
+    </div>
+  </section>
+
+  <section class="page" id="library">
+    <div class="heading"><div><div class="eyebrow">YOUR MATERIALS</div><h1>Материалын сан</h1><p>Оруулсан PDF материал болон түүнээс үүсгэсэн сургалтын агуулга.</p></div><button class="primary" onclick="showPage('chat');document.getElementById('pdfInput').click()">＋ Материал нэмэх</button></div>
+    <div class="card"><div class="cardhead"><h3>Оруулсан материалууд</h3></div><div class="cardbody" id="libraryList"><div class="empty">Одоогоор материал алга. AI багшаас PDF файл оруулж эхлээрэй.</div></div></div>
+  </section>
+
+  <section class="page" id="tools">
+    <div class="heading"><div><div class="eyebrow">STUDY TOOLS</div><h1>Суралцах хэрэгсэл</h1><p>Хичээлийн агуулгаа хураангуй, сорил, flashcard болгон хувиргаарай.</p></div></div>
+    <div class="toolgrid">
+      <button class="card toolcard" onclick="selectTool('summary')"><span class="big">📝</span><h3>Хураангуй үүсгэх</h3><p>Урт текстээс гол санаа, чухал ойлголтуудыг ялгана.</p></button>
+      <button class="card toolcard" onclick="selectTool('quiz')"><span class="big">🎯</span><h3>Сорил үүсгэх</h3><p>Сонгосон материалаас мэдлэг шалгах асуулт гаргана.</p></button>
+      <button class="card toolcard" onclick="selectTool('cards')"><span class="big">🗂️</span><h3>Flashcards</h3><p>Нэр томьёо болон тодорхойлолтоор давтлагын карт үүсгэнэ.</p></button>
+    </div>
+    <div class="card toolwork" id="toolWork">
+      <h3 id="toolTitle" style="margin:0 0 6px">Хэрэгсэл сонгоно уу</h3><p id="toolDesc" style="color:var(--muted);font-size:13px;margin:0 0 13px">Дээрх хэрэгслүүдээс нэгийг сонгоод текст оруулна уу.</p>
+      <textarea id="toolInput" placeholder="Энд хичээлийн текстээ хуулж оруулна уу..."></textarea>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap"><button class="primary" id="toolRun">Үүсгэх</button><span style="font-size:11px;color:var(--muted)">AI багш серверээр дамжуулан боловсруулна.</span></div>
+      <div class="output" id="toolOutput">Үр дүн энд харагдана.</div>
+    </div>
+  </section>
+
+  <section class="page" id="settings">
+    <div class="heading"><div><div class="eyebrow">CONFIGURATION</div><h1>Тохиргоо</h1><p>AI үйлчилгээний холболтын төлөв.</p></div></div>
+    <div class="card settings">
+      <h3 style="margin:0">AI холболт</h3><p style="color:var(--muted);font-size:13px">API key серверийн .env файлд хадгалагдсан. Браузерт key оруулах шаардлагагүй.</p>
+      <div class="note"><b>Аюулгүй байдал:</b> Gemini API key зөвхөн сервер дээр байна. Браузерт хадгалагдахгүй, харагдахгүй.</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="primary" id="testSettings">Холболт шалгах</button></div>
+      <p id="settingsStatus" style="font-size:12px;color:var(--muted);margin-top:12px">Холболт шалгаж байна…</p>
+    </div>
+  </section>
+</main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const API_CHAT="/api/chat";
+const API_HEALTH="/api/health";
+const CHAT_SYSTEM="Та AI Academic Assistant, Монгол хэлээр хариулдаг академик туслах. Хэрэглэгчийн асуултад ойлгомжтой, алхамчилсан, үнэн зөв хариул. Хэрэв өгсөн материалд тулгуурлавал зөвхөн материалд байгаа мэдээллийг ашиглаж, хуудасны дугаарыг дурд. Материалд байхгүй мэдээллийг байхгүй гэж хэл.";
+const TOOL_SYSTEM="Та академик сургалтын туслах. Монгол хэлээр, зөвхөн өгсөн эх материалд тулгуурлан хариул.";
+let pdfText="", pdfName="", pdfPages=[], currentTool="", summaryCount=0, quizCount=0;
+
+function toast(s){$("toast").textContent=s;$("toast").style.display="block";setTimeout(()=>$("toast").style.display="none",2600)}
+function showPage(id){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));const names={home:"Нүүр хуудас",chat:"AI багш",library:"Материалын сан",tools:"Суралцах хэрэгсэл",settings:"Тохиргоо"};$("crumb").textContent=names[id]||id;window.scrollTo(0,0)}
+document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+
+function setMode(live){$("modePill").textContent=live?"● AI холбогдсон":"● AI холбогдоогүй";$("modePill").classList.toggle("demo",!live)}
+async function checkHealth(){
+ try{
+  const r=await fetch(API_HEALTH);
+  const d=await r.json();
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  if(!d.configured){setMode(false);return "Сервер ажиллаж байна, гэхдээ GEMINI_API_KEY тохироогүй байна. .env файлаа шалгана уу."}
+  setMode(true);return "Холболт амжилттай. AI бэлэн байна.";
+ }catch(e){setMode(false);return "Сервертэй холбогдож чадсангүй. Сервер (npm start) ажиллаж байгаа эсэхийг шалгана уу."}
+}
+
+async function callAI(message,system){
+ const res=await fetch(API_CHAT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message,system})});
+ const data=await res.json().catch(()=>({}));
+ if(!res.ok)throw new Error(data.error||("Серверийн алдаа "+res.status));
+ return data.reply||"Хариулт ирсэнгүй.";
+}
+function askAI(q){return callAI((pdfText?`Хэрэглэгчийн оруулсан сургалтын материал:\n${relevantContext(q)}\n\n`:"")+q,CHAT_SYSTEM)}
+
+function appendMsg(text,who="ai"){const wrap=document.createElement("div");wrap.className="msg "+(who==="user"?"user":"");const av=document.createElement("div");av.className="avatar";av.textContent=who==="user"?"О":"✧";const bubble=document.createElement("div");bubble.className="bubble";bubble.textContent=text;wrap.append(av,bubble);$("messages").appendChild(wrap);$("messages").scrollTop=$("messages").scrollHeight;return bubble}
+async function loadPDF(file){
+ if(!file)return;if(file.type!=="application/pdf"&&!file.name.toLowerCase().endsWith(".pdf")){toast("Зөвхөн PDF файл сонгоно уу.");return}
+ if(file.size>15*1024*1024){toast("Файлын хэмжээ 15MB-аас бага байх ёстой.");return}
+ if(!window.pdfjsLib){toast("PDF уншигч ачаалагдсангүй. Интернэт холболтоо шалгана уу.");return}
+ $("chatStatus").textContent="PDF уншиж байна…";pdfText="";pdfPages=[];pdfName=file.name;
+ try{pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";const buf=await file.arrayBuffer();const doc=await pdfjsLib.getDocument({data:buf}).promise;
+ for(let n=1;n<=doc.numPages;n++){const page=await doc.getPage(n);const content=await page.getTextContent();const txt=content.items.map(x=>x.str).join(" ");pdfPages.push({page:n,text:txt});pdfText+=`\n[Хуудас ${n}]\n${txt}\n`;}
+ if(!pdfText.trim())throw new Error("PDF дотор уншигдах текст олдсонгүй. Энэ нь скан зурагтай PDF байж болно.");
+ $("fileInfo").style.display="block";$("fileInfo").textContent=`📄 ${file.name} · ${doc.numPages} хуудас · Уншсан`; $("chatStatus").textContent="Материал бэлэн";$("statFiles").textContent="1";renderLibrary();toast("PDF амжилттай уншлаа.");
+ appendMsg(`“${file.name}” материалыг уншиж дууслаа (${doc.numPages} хуудас). Одоо материалаас асуулт асууж болно.`,"ai");
+ }catch(e){$("chatStatus").textContent="Алдаа";toast(e.message||"PDF уншихад алдаа гарлаа.");}
+}
+$("pdfInput").addEventListener("change",e=>loadPDF(e.target.files[0]));
+function renderLibrary(){$("libraryList").innerHTML="";if(!pdfName){$("libraryList").innerHTML='<div class="empty">Одоогоор материал алга. AI багшаас PDF файл оруулж эхлээрэй.</div>';return}
+ const d=document.createElement("div");d.style.cssText="display:flex;justify-content:space-between;align-items:center;padding:13px;border:1px solid var(--line);border-radius:11px;gap:10px";const left=document.createElement("div");left.innerHTML='<b>📄 '+escapeHTML(pdfName)+'</b><div style="font-size:12px;color:#718096">'+pdfPages.length+' хуудас · Энэ сессэд уншсан</div>';const btn=document.createElement("button");btn.className="secondary";btn.textContent="Устгах";btn.onclick=()=>{pdfText="";pdfPages=[];pdfName="";$("statFiles").textContent="0";$("fileInfo").style.display="none";renderLibrary();toast("Материалын сангаас хаслаа.")};d.append(left,btn);$("libraryList").append(d)}
+function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function relevantContext(q){if(!pdfText)return"";const terms=q.toLowerCase().split(/\W+/).filter(x=>x.length>2);const chunks=pdfPages.map(p=>({page:p.page,text:p.text,score:terms.reduce((a,t)=>a+(p.text.toLowerCase().includes(t)?1:0),0)})).sort((a,b)=>b.score-a.score).slice(0,4);return chunks.filter(x=>x.text.trim()).map(x=>`[Хуудас ${x.page}]\n${x.text.slice(0,3500)}`).join("\n\n").slice(0,11000)}
+
+async function sendQuestion(){const q=$("question").value.trim();if(!q)return;$("question").value="";appendMsg(q,"user");const b=appendMsg("Хариулт боловсруулж байна…");$("chatStatus").textContent="Боловсруулж байна…";$("sendBtn").disabled=true;
+ try{b.textContent=await askAI(q)}catch(e){b.textContent="Хариулт авахад алдаа гарлаа.\n"+e.message+"\n\nСервер ажиллаж байгаа эсэх болон GEMINI_API_KEY-г шалгана уу."}finally{$("chatStatus").textContent="Бэлэн";$("sendBtn").disabled=false}}
+$("sendBtn").addEventListener("click",sendQuestion);$("question").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendQuestion()}});
+
+function selectTool(t){currentTool=t;const map={summary:["Хураангуй үүсгэх","Текстийн гол санаа, чухал ойлголтыг ялгана."],quiz:["Сорил үүсгэх","Материалаас сонгох хэлбэрийн асуулт үүсгэнэ."],cards:["Flashcards үүсгэх","Нэр томьёо ба тодорхойлолтын карт үүсгэнэ."]};$("toolTitle").textContent=map[t][0];$("toolDesc").textContent=map[t][1];$("toolOutput").textContent="Үр дүн энд харагдана.";document.querySelectorAll(".toolcard").forEach(x=>x.style.borderColor="");}
+async function runTool(){
+ if(!currentTool){toast("Эхлээд хэрэгсэл сонгоно уу.");return}
+ const text=$("toolInput").value.trim()||pdfText;if(!text){toast("Эхлээд текст оруулах эсвэл PDF материал оруулна уу.");return}
+ const prompts={summary:"Дараах сургалтын материалыг Монгол хэлээр товч, бүтэцтэй хураангуйл. Гол санаа, чухал нэр томьёо, дүгнэлтийг гарга.",quiz:"Дараах материалаас 5 сонгох хэлбэрийн сорил зохио. Асуулт бүр 4 сонголттой, зөв хариулт болон тайлбарыг төгсгөлд өг.",cards:"Дараах материалаас 8 flashcard үүсгэ. Карт бүр Нэр томьёо/Асуулт — Тодорхойлолт/Хариулт гэсэн хэлбэртэй байг."};
+ $("toolOutput").textContent="Боловсруулж байна…";$("toolRun").disabled=true;
+ try{
+  const out=await callAI(prompts[currentTool]+"\n\n"+text.slice(0,18000),TOOL_SYSTEM);
+  $("toolOutput").textContent=out;
+  if(currentTool==="summary"){summaryCount++;$("statSummaries").textContent=summaryCount}
+  if(currentTool==="quiz"){quizCount++;$("statQuizzes").textContent=quizCount}
+ }catch(e){$("toolOutput").textContent="Алдаа: "+e.message}
+ finally{$("toolRun").disabled=false}
+}
+$("toolRun").addEventListener("click",runTool);
+
+$("testSettings").addEventListener("click",async()=>{$("settingsStatus").textContent="Холболт шалгаж байна…";$("settingsStatus").textContent=await checkHealth()});
+$("settingsStatus").textContent="Холболт шалгаж байна…";
+checkHealth().then(msg=>$("settingsStatus").textContent=msg);
+</script>
+</body>
+</html>
